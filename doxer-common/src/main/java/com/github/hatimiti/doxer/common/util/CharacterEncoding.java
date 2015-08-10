@@ -9,6 +9,9 @@ public enum CharacterEncoding {
 	/** UTF-8("UTF-8") */
 	UTF8("UTF-8"),
 
+	/** MS932("MS932") */
+	MS932("MS932"),
+
 	/** Shift_JIS("Shift_JIS") */
 	SHIFT_JIS("Shift_JIS"),
 

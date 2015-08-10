@@ -9,7 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.seasar.util.lang.StringUtil;
@@ -518,6 +521,30 @@ public final class _Str {
 		String strval = asStrOrEmpty(value);
 		int idx = strval.indexOf('.');
 		return idx < 0 ? "0" : strval.substring(idx + 1, strval.length());
+	}
+
+	public static String createRandomHexString(int length) {
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			return EMPTY;
+		}
+		md.update(Long.valueOf(new Random(System.nanoTime()).nextLong()).toString().getBytes());
+		return toHex(md.digest()).substring(0, length);
+	}
+
+	/**
+	 * Convert a byte array to a String of hexadecimal digits and return it.
+	 * @param buffer The byte array to be converted
+	 */
+	private static String toHex(byte buffer[]) {
+		StringBuffer sb = new StringBuffer(buffer.length * 2);
+		for (int i = 0; i < buffer.length; i++) {
+			sb.append(Character.forDigit((buffer[i] & 0xf0) >> 4, 16));
+			sb.append(Character.forDigit(buffer[i] & 0x0f, 16));
+		}
+		return sb.toString();
 	}
 
 }
