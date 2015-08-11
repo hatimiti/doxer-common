@@ -14,11 +14,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * HTTP プロトコルのためのユーティリティ
@@ -170,6 +175,26 @@ public final class _Http {
 	 */
 	public static String getRemoteAddress(HttpServletRequest request) {
 		return request.getRemoteAddr();
+	}
+
+	/**
+	 * セッション固定化攻撃対策用に現在のセッションを新しいセッションに
+	 * 保持しているオブジェクトを移し替える。
+	 * 現在のセッションは無効化する。
+	 * @param request httpリクエスト
+	 */
+	public static void renewSession4FixationAttack(HttpServletRequest request) {
+		Objects.requireNonNull(request);
+
+		HttpSession oldSession = request.getSession();
+		Map<String, Object> attrs = new HashMap<>();
+		Collections.list(oldSession.getAttributeNames()).forEach(k -> {
+			attrs.put(k, oldSession.getAttribute(k));
+		});
+
+		oldSession.invalidate();
+		HttpSession newSession = request.getSession(true);
+		attrs.forEach((k, v) -> { newSession.setAttribute(k, v); });
 	}
 
 }
