@@ -2,6 +2,7 @@ package com.github.hatimiti.doxer.common.message;
 
 import static com.github.hatimiti.doxer.common.util._Obj.*;
 import static com.github.hatimiti.doxer.common.util._Str.*;
+import static java.lang.String.*;
 
 import com.github.hatimiti.doxer.common.util._Obj;
 
@@ -33,7 +34,9 @@ public class Owner {
 
 	public static Owner of(String property, String name, Integer index) {
 		if (_Obj.isEmpty(property)) {
-			throw new IllegalArgumentException("Not appoint a null character in a property.");
+			throw new IllegalArgumentException(
+					format("%s: Can't appoint a null character to a property. name: %s index: %s",
+							Owner.class, name, index));
 		}
 		return new Owner(property, asStrOrEmpty(name), index);
 	}
